@@ -1,0 +1,60 @@
+si6mfd: Simple IPv6 multicast forwarding daemon for Linux
+
+  si6mfd is an implementation of the IPv6 multicast 
+  forwarding daemon for Linux. This daemon forwards IPv6 
+  multicast packets between ingress and egress interfaces 
+  without any IPv6 multicast routing configuration. 
+
+  Although IP multicast routing is normally performed by 
+  standardized routing protocols, e.g., PIM-SM or PIM-DM,
+  sometimes simple multicast forwarding helps to test 
+  something rapidly. This is what the daemon to support.
+
+  Requirements and limitations:
+  - Kernel must support IPv6 multicast forwarding. 
+    (i.e. CONFIG_IPV6_MROUTE=y)
+  - The ingress interface must have one global 
+    unicast IPv6 address. The prefix (64bit) of
+    this address is used to determine the direction
+    of multicast forwarding.
+    (i.e. ingress -> egress or egress -> ingress)
+    It means that a sender connected to the ingress
+    interface must have a global scope IPv6 address,
+    whose prefix is corresponds to the one in the ingress
+    interface. 
+  - Link-local scope multicast packets are not forwarded. 
+
+Installation:
+============
+1.Run configure script, i.e.
+
+$ ./configure
+
+2.Run 'make' i.e.
+
+$ make
+
+Then a binary will be generated in the "src" dir.
+If you would install the binary to the /usr/bin dir, 
+run the install script i.e.
+
+# make install
+
+Configuration
+=============
+It only needs 2 mandatory parameters and 1 options.
+You need to specify the interface identifier of ingress
+and egress interfaces. (e.g. 'eth0', 'tun0', etc)
+
+If you need to use the binary as a daemon that is
+detached from console, please specify -d option.
+In this case you can find its logging messages 
+in the syslog (/var/log/syslog) file. 
+If it runs as a daemon, the only way to stop it 
+is to use kill/killall.
+
+Example:
+	# si6mfd -i eth0 -e tun0 
+or
+	# si6mfd -i eth0 -e tun0 -d
+
